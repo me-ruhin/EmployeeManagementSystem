@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Livewire\Dashboard\AdminDashboard;
 use App\Http\Livewire\Dashboard\HRDashboard;
 use App\Http\Livewire\Dashboard\ManagerDashboard;
+use App\Http\Livewire\Dashboard\DepartmentHeadDashboard;
 use App\Http\Livewire\Dashboard\EmployeeDashboard;
 
 class DashboardController extends Controller
@@ -18,14 +19,16 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         
-        if ($user->isAdmin()) {
-            return view('dashboard.admin');
-        } elseif ($user->isHR()) {
-            return view('dashboard.hr');
-        } elseif ($user->isManager() || $user->isDepartmentHead()) {
-            return view('dashboard.manager');
+        if ($user->hasRole('Admin')) {
+            return view('dashboard', ['component' => 'admin-dashboard']);
+        } elseif ($user->hasRole('HR')) {
+            return view('dashboard', ['component' => 'hr-dashboard']);
+        } elseif ($user->hasRole('Manager')) {
+            return view('dashboard', ['component' => 'manager-dashboard']);
+        } elseif ($user->hasRole('Department Head')) {
+            return view('dashboard', ['component' => 'department-head-dashboard']);
         } else {
-            return view('dashboard.employee');
+            return view('dashboard', ['component' => 'employee-dashboard']);
         }
     }
 }

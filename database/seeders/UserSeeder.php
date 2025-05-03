@@ -84,7 +84,6 @@ class UserSeeder extends Seeder
         foreach ($departments as $department) {
             for ($i = 1; $i <= 3; $i++) {
                 $employee = User::create([
-                    'id' => Str::uuid(),
                     'name' => "Employee {$department->name} {$i}",
                     'email' => "employee{$i}." . strtolower(str_replace(' ', '', $department->name)) . '@example.com',
                     'email_verified_at' => now(),

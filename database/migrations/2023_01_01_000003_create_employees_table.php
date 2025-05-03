@@ -12,22 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('user_id');
-            $table->uuid('company_id');
-            $table->uuid('department_id');
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
+            $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
             $table->string('designation');
             $table->date('joining_date');
             $table->decimal('salary', 12, 2);
             $table->string('bank_account_number')->nullable();
             $table->string('tax_id')->nullable();
-            $table->uuid('reporting_manager_id')->nullable();
+            $table->foreignId('reporting_manager_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
-            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
-            $table->foreign('reporting_manager_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

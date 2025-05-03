@@ -2,90 +2,65 @@
 
 namespace App\Http\Livewire\Dashboard;
 
+use Livewire\Component;
 use App\Models\Employee;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\Leave;
-use App\Models\Attendance;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 
 class ManagerDashboard extends Component
 {
-    public $teamMembers;
-    public $teamCount;
-    public $onLeaveToday;
-    public $pendingLeaves;
-    public $projects;
-    public $upcomingDeadlines;
-    public $attendanceSummary;
+    public $teamMembers = 0;
+    public $activeProjects = 0; 
+    public $pendingTasks = 0;
+    public $pendingApprovals = 0;
+    
+    public $teamMembersList = [];
+    public $projectsList = [];
+    public $pendingTasksList = [];
     
     public function mount()
     {
-        $this->loadDashboardData();
-    }
-    
-    public function loadDashboardData()
-    {
         $user = Auth::user();
+        $department = $user->department;
         
-        // Get team members (direct reports)
-        $employeeIds = Employee::where('reporting_manager_id', $user->id)->pluck('id')->toArray();
-        $userIds = Employee::where('reporting_manager_id', $user->id)->pluck('user_id')->toArray();
-        
-        $this->teamMembers = Employee::with('user')
-            ->where('reporting_manager_id', $user->id)
-            ->get();
-            
-        $this->teamCount = $this->teamMembers->count();
-        
-        // Get on leave team members today
-        $today = Carbon::today();
-        $this->onLeaveToday = Attendance::whereIn('employee_id', $employeeIds)
-            ->where('date', $today)
-            ->where('status', 'On Leave')
+        // Count metrics
+        $this->teamMembers = Employee::where('department_id', $department->id)->count();
+        $this->activeProjects = Project::where('department_id', $department->id)
+            ->where('status', 'Active')
             ->count();
-            
-        // Get pending leave requests
-        $this->pendingLeaves = Leave::whereIn('employee_id', $employeeIds)
-            ->where('status', 'Pending')
-            ->orderBy('created_at', 'desc')
+        $this->pendingTasks = Task::whereHas('project', function($query) use ($department) {
+            $query->where('department_id', $department->id);
+        })
+        ->where('status', 'Pending')
+        ->count();
+        $this->pendingApprovals = Leave::whereHas('employee', function($query) use ($department) {
+            $query->where('department_id', $department->id);
+        })
+        ->where('status', 'Pending')
+        ->count();
+        
+        // Get team members
+        $this->teamMembersList = Employee::with('user')
+            ->where('department_id', $department->id)
             ->get();
             
-        // Get associated projects
-        $departmentId = $user->department_id;
-        $this->projects = Project::where('department_id', $departmentId)
-            ->orderBy('end_date')
-            ->get();
-            
-        // Get upcoming deadlines
-        $this->upcomingDeadlines = Task::whereIn('assigned_to', $employeeIds)
-            ->whereIn('status', ['Pending', 'In Progress'])
-            ->where('deadline', '>=', now())
-            ->orderBy('deadline')
+        // Get active projects
+        $this->projectsList = Project::where('department_id', $department->id)
+            ->where('status', 'Active')
             ->take(5)
             ->get();
             
-        // Get attendance summary for today
-        $this->attendanceSummary = [
-            'present' => Attendance::whereIn('employee_id', $employeeIds)
-                ->where('date', $today)
-                ->where('status', 'Present')
-                ->count(),
-            'absent' => Attendance::whereIn('employee_id', $employeeIds)
-                ->where('date', $today)
-                ->where('status', 'Absent')
-                ->count(),
-            'late' => Attendance::whereIn('employee_id', $employeeIds)
-                ->where('date', $today)
-                ->where('status', 'Late')
-                ->count(),
-            'on_leave' => Attendance::whereIn('employee_id', $employeeIds)
-                ->where('date', $today)
-                ->where('status', 'On Leave')
-                ->count(),
-        ];
+        // Get pending tasks
+        $this->pendingTasksList = Task::with('employee.user')
+            ->whereHas('project', function($query) use ($department) {
+                $query->where('department_id', $department->id);
+            })
+            ->where('status', 'Pending')
+            ->orderBy('priority', 'desc')
+            ->take(10)
+            ->get();
     }
     
     public function render()

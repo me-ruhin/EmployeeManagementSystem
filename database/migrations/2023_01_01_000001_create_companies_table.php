@@ -12,17 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('companies', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('name')->unique();
             $table->text('address');
             $table->string('contact_email')->unique();
             $table->string('contact_phone')->unique();
             $table->timestamps();
-        });
-
-        // Add foreign key constraints to users table
-        Schema::table('users', function (Blueprint $table) {
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('set null');
         });
     }
 
@@ -31,10 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['company_id']);
-        });
-        
         Schema::dropIfExists('companies');
     }
 };

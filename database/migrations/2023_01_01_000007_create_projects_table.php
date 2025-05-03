@@ -12,18 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('projects', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('company_id');
-            $table->uuid('department_id');
+            $table->id();
+            $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
+            $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
             $table->string('name');
             $table->text('description');
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->enum('status', ['Ongoing', 'Completed', 'Cancelled'])->default('Ongoing');
             $table->timestamps();
-
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
-            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
         });
     }
 

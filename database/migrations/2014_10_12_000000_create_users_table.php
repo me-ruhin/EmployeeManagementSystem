@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone')->unique();
@@ -20,8 +20,8 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['Admin', 'HR', 'Manager', 'Employee', 'Department Head'])->default('Employee');
             $table->enum('status', ['Active', 'Inactive', 'Resigned', 'On Leave'])->default('Active');
-            $table->uuid('company_id')->nullable();
-            $table->uuid('department_id')->nullable();
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->unsignedBigInteger('department_id')->nullable();
             $table->string('profile_photo')->nullable();
             $table->rememberToken();
             $table->timestamps();

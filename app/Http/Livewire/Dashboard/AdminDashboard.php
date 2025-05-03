@@ -2,72 +2,49 @@
 
 namespace App\Http\Livewire\Dashboard;
 
-use App\Models\User;
-use App\Models\Employee;
-use App\Models\Department;
-use App\Models\Project;
-use App\Models\Leave;
-use App\Models\Attendance;
 use Livewire\Component;
+use App\Models\User;
+use App\Models\Company;
+use App\Models\Department;
+use App\Models\Employee;
+use App\Models\Project;
+use App\Models\Task;
+use App\Models\Recruitment;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class AdminDashboard extends Component
 {
-    public $totalEmployees;
-    public $totalDepartments;
-    public $activeProjects;
-    public $pendingLeaves;
-    public $todayAttendance;
-    public $departmentEmployeeCount;
-    public $projectsStatusCount;
-    public $recentLeaves;
+    public $totalUsers = 0;
+    public $totalEmployees = 0;
+    public $totalDepartments = 0;
+    public $activeProjects = 0;
+    
+    public $usersByRole = [];
+    public $recentUsers = [];
+    public $pendingLeaves = [];
+    public $departmentCounts = [];
     
     public function mount()
     {
-        $this->loadDashboardData();
-    }
-    
-    public function loadDashboardData()
-    {
-        // Get counts for summary cards
+        // Count metrics
+        $this->totalUsers = User::count();
         $this->totalEmployees = Employee::count();
         $this->totalDepartments = Department::count();
-        $this->activeProjects = Project::where('status', 'Ongoing')->count();
-        $this->pendingLeaves = Leave::where('status', 'Pending')->count();
+        $this->activeProjects = Project::where('status', 'Active')->count();
         
-        // Get today's attendance statistics
-        $today = Carbon::today();
-        $this->todayAttendance = [
-            'present' => Attendance::whereDate('date', $today)->where('status', 'Present')->count(),
-            'absent' => Attendance::whereDate('date', $today)->where('status', 'Absent')->count(),
-            'late' => Attendance::whereDate('date', $today)->where('status', 'Late')->count(),
-            'on_leave' => Attendance::whereDate('date', $today)->where('status', 'On Leave')->count(),
-        ];
-        
-        // Get employee count by department for chart
-        $this->departmentEmployeeCount = Department::withCount('employees')
+        // Users by role
+        $this->usersByRole = User::select('role', DB::raw('count(*) as count'))
+            ->groupBy('role')
+            ->get();
+            
+        // Recent users
+        $this->recentUsers = User::orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+            
+        // Department counts
+        $this->departmentCounts = Department::withCount('employees')
             ->orderBy('employees_count', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function ($department) {
-                return [
-                    'name' => $department->name,
-                    'count' => $department->employees_count
-                ];
-            });
-        
-        // Get projects by status for chart
-        $this->projectsStatusCount = [
-            'ongoing' => Project::where('status', 'Ongoing')->count(),
-            'completed' => Project::where('status', 'Completed')->count(),
-            'cancelled' => Project::where('status', 'Cancelled')->count(),
-        ];
-        
-        // Get recent leave requests
-        $this->recentLeaves = Leave::with(['employee.user'])
-            ->orderBy('created_at', 'desc')
-            ->take(5)
             ->get();
     }
     
