@@ -1,0 +1,152 @@
+Database Overview for [Employ
+Management ERP ]
+1. Users Table
+• Purpose: Authentication & Role Management
+• Key Fields:
+• id: UUID (Primary Key)
+• name: User's name
+• email: Unique email address
+• password: User's password
+• phone: Unique phone number
+• role: User role (Admin, HR, Manager, Employee, Department Head)
+• status: User status (Active, Inactive, Resigned, On Leave)
+• company_id: Foreign Key to Companies
+• department_id: Foreign Key to Departments
+• profile_photo: URL to profile photo
+• email_verified_at: Timestamp for email verification
+• created_at, updated_at: Timestamps for record tracking
+2. Companies Table
+• Purpose: Managing Multiple Companies
+• Key Fields:
+• id: UUID (Primary Key)
+• name: Unique company name
+• address: Company address
+• contact_email: Unique contact email
+• contact_phone: Unique contact phone
+• created_at, updated_at: Timestamps
+3. Departments Table
+• Purpose: Different Departments Under Companies
+• Key Fields:
+• id: UUID (Primary Key)
+• company_id: Foreign Key to Companies
+• name: Department name
+• description: Department description
+• head_id: Foreign Key to Users (Department Head)
+• created_at, updated_at: Timestamps
+4. Employees Table
+• Purpose: Detailed Employee Information
+• Key Fields:
+• id: UUID (Primary Key)
+• user_id: Foreign Key to Users
+• company_id: Foreign Key to Companies
+• department_id: Foreign Key to Departments
+• designation: Employee designation
+• joining_date: Date of joining
+• salary: Employee salary
+• bank_account_number, tax_id: Financial details
+• reporting_manager_id: Foreign Key to Users (Reporting Manager)
+• created_at, updated_at: Timestamps
+5. Attendance Table
+• Purpose: Tracking Employee Attendance
+• Key Fields:
+• id: UUID (Primary Key)
+• employee_id: Foreign Key to Employees
+• date: Attendance date
+• check_in_time, check_out_time: Attendance times
+• status: Attendance status (Present, Absent, Late, On Leave)
+• created_at, updated_at: Timestamps
+6. Leaves Table
+• Purpose: Managing Employee Leave Requests
+• Key Fields:
+• id: UUID (Primary Key)
+• employee_id: Foreign Key to Employees
+• leave_type: Type of leave (Sick, Casual, Maternity, Annual)
+• start_date, end_date: Leave duration
+• status: Leave status (Pending, Approved, Rejected)
+• approved_by: Foreign Key to Users (Approver)
+• created_at, updated_at: Timestamps
+7. Payroll Table
+• Purpose: Salary Processing
+• Key Fields:
+• id: UUID (Primary Key)
+• employee_id: Foreign Key to Employees
+• salary_month: Month of salary
+• basic_salary, bonus, deductions, net_salary: Salary details
+• status: Payment status (Pending, Paid)
+• payment_date: Date of payment
+• created_at, updated_at: Timestamps
+8. Projects Table
+• Purpose: Managing Employee Projects
+• Key Fields:
+• id: UUID (Primary Key)
+• company_id: Foreign Key to Companies
+• department_id: Foreign Key to Departments
+• name: Project name
+• description: Project description
+• start_date, end_date: Project timeline
+• status: Project status (Ongoing, Completed, Cancelled)
+• created_at, updated_at: Timestamps
+9. Tasks Table
+• Purpose: Tracking Tasks Under Projects
+• Key Fields:
+• id: UUID (Primary Key)
+• project_id: Foreign Key to Projects
+• assigned_to: Foreign Key to Employees
+• title: Task title
+• description: Task description
+• status: Task status (Pending, In Progress, Completed, Cancelled)
+• priority: Task priority (Low, Medium, High, Critical)
+• deadline: Task deadline
+• created_at, updated_at: Timestamps
+10. Performance Evaluations Table
+• Purpose: Employee Performance Reviews
+• Key Fields:
+• id: UUID (Primary Key)
+• employee_id: Foreign Key to Employees
+• review_date: Date of review
+• reviewer_id: Foreign Key to Users (Reviewer)
+• rating: Performance rating
+• comments: Additional comments
+• created_at, updated_at: Timestamps
+11. Recruitment Table
+• Purpose: Job Hiring Process
+• Key Fields:
+• id: UUID (Primary Key)
+• position: Job position
+• department_id: Foreign Key to Departments
+• job_description: Description of the job
+• status: Recruitment status (Open, Closed)
+• created_at, updated_at: Timestamps
+12. Candidates Table
+• Purpose: Job Applicants
+• Key Fields:
+• id: UUID (Primary Key)
+• recruitment_id: Foreign Key to Recruitments
+• name: Candidate's name
+• email: Unique email address
+• phone: Unique phone number
+• resume: File path to resume
+• status: Application status (Pending, Shortlisted, Rejected, Hired)
+• created_at, updated_at: Timestamps
+13. Assets Table
+• Purpose: Tracking Company Assets
+• Key Fields:
+• id: UUID (Primary Key)
+• company_id: Foreign Key to Companies
+• name: Asset name
+• category: Asset category
+• status: Asset status (Available, Assigned, Under Maintenance, Disposed)
+• assigned_to: Foreign Key to Employees (Assigned employee)
+• created_at, updated_at: Timestamps
+14. Expenses Table
+• Purpose: Tracking Employee and Departmental Expenses
+• Key Fields:
+• id: UUID (Primary Key)
+• employee_id: Foreign Key to Employees (Nullable)
+• department_id: Foreign Key to Departments (Nullable)
+• expense_type: Type of expense
+• amount: Expense amount
+• description: Description of the expense
+• status: Expense status (Pending, Approved, Rejected)
+• approved_by: Foreign Key to Users (Approver)
+• created_at, updated_at: Timestamps
