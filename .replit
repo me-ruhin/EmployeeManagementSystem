@@ -5,6 +5,60 @@ channel = "stable-24_05"
 packages = ["php"]
 
 [workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Database Setup"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Install Dependencies"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Update Dependencies"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Generate Key"
+
+[[workflows.workflow]]
+name = "Database Setup"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "php artisan migrate:fresh --seed"
+
+[[workflows.workflow]]
+name = "Install Dependencies"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "composer install"
+
+[[workflows.workflow]]
+name = "Update Dependencies"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "composer update"
+
+[[workflows.workflow]]
+name = "Generate Key"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "php artisan key:generate"
 
 [deployment]
 run = ["sh", "-c", "cp .env.example .env && composer install && php artisan key:generate && php artisan migrate --seed && php artisan serve --host=0.0.0.0 --port=5000"]
