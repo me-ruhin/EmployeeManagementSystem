@@ -34,7 +34,7 @@ class PerformanceEvaluation extends Model
     ];
 
     /**
-     * Get the employee associated with the performance evaluation.
+     * Get the employee that this performance evaluation belongs to.
      */
     public function employee()
     {
@@ -42,7 +42,7 @@ class PerformanceEvaluation extends Model
     }
 
     /**
-     * Get the user who reviewed the employee.
+     * Get the user who conducted the review.
      */
     public function reviewer()
     {
@@ -50,9 +50,11 @@ class PerformanceEvaluation extends Model
     }
 
     /**
-     * Get rating text
+     * Get the rating description based on the rating value.
+     *
+     * @return string
      */
-    public function getRatingTextAttribute()
+    public function getRatingDescriptionAttribute()
     {
         return match($this->rating) {
             1 => 'Poor',

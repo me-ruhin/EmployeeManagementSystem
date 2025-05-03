@@ -24,7 +24,7 @@ class Asset extends Model
     ];
 
     /**
-     * Get the company associated with the asset.
+     * Get the company that this asset belongs to.
      */
     public function company()
     {
@@ -32,7 +32,7 @@ class Asset extends Model
     }
 
     /**
-     * Get the employee the asset is assigned to.
+     * Get the employee who is assigned to this asset.
      */
     public function assignedEmployee()
     {
@@ -40,7 +40,9 @@ class Asset extends Model
     }
 
     /**
-     * Check if asset is available
+     * Check if the asset is available.
+     *
+     * @return bool
      */
     public function isAvailable()
     {
@@ -48,7 +50,9 @@ class Asset extends Model
     }
 
     /**
-     * Check if asset is assigned
+     * Check if the asset is assigned.
+     *
+     * @return bool
      */
     public function isAssigned()
     {
@@ -56,7 +60,9 @@ class Asset extends Model
     }
 
     /**
-     * Check if asset is under maintenance
+     * Check if the asset is under maintenance.
+     *
+     * @return bool
      */
     public function isUnderMaintenance()
     {
@@ -64,7 +70,9 @@ class Asset extends Model
     }
 
     /**
-     * Check if asset is disposed
+     * Check if the asset is disposed.
+     *
+     * @return bool
      */
     public function isDisposed()
     {

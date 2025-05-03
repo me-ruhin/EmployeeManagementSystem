@@ -25,7 +25,7 @@ class Candidate extends Model
     ];
 
     /**
-     * Get the recruitment associated with the candidate.
+     * Get the recruitment that this candidate belongs to.
      */
     public function recruitment()
     {
@@ -33,7 +33,9 @@ class Candidate extends Model
     }
 
     /**
-     * Check if candidate is pending
+     * Check if the candidate's application is pending.
+     *
+     * @return bool
      */
     public function isPending()
     {
@@ -41,7 +43,9 @@ class Candidate extends Model
     }
 
     /**
-     * Check if candidate is shortlisted
+     * Check if the candidate is shortlisted.
+     *
+     * @return bool
      */
     public function isShortlisted()
     {
@@ -49,7 +53,9 @@ class Candidate extends Model
     }
 
     /**
-     * Check if candidate is rejected
+     * Check if the candidate is rejected.
+     *
+     * @return bool
      */
     public function isRejected()
     {
@@ -57,10 +63,22 @@ class Candidate extends Model
     }
 
     /**
-     * Check if candidate is hired
+     * Check if the candidate is hired.
+     *
+     * @return bool
      */
     public function isHired()
     {
         return $this->status === 'Hired';
+    }
+
+    /**
+     * Get the job position applied for by this candidate.
+     *
+     * @return string
+     */
+    public function getPositionAppliedAttribute()
+    {
+        return $this->recruitment ? $this->recruitment->position : 'Unknown';
     }
 }

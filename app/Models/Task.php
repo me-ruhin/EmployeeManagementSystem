@@ -35,7 +35,7 @@ class Task extends Model
     ];
 
     /**
-     * Get the project associated with the task.
+     * Get the project that this task belongs to.
      */
     public function project()
     {
@@ -43,15 +43,17 @@ class Task extends Model
     }
 
     /**
-     * Get the employee assigned to the task.
+     * Get the employee who is assigned to this task.
      */
-    public function assignee()
+    public function assignedEmployee()
     {
         return $this->belongsTo(Employee::class, 'assigned_to');
     }
 
     /**
-     * Check if task is pending
+     * Check if the task is pending.
+     *
+     * @return bool
      */
     public function isPending()
     {
@@ -59,7 +61,9 @@ class Task extends Model
     }
 
     /**
-     * Check if task is in progress
+     * Check if the task is in progress.
+     *
+     * @return bool
      */
     public function isInProgress()
     {
@@ -67,7 +71,9 @@ class Task extends Model
     }
 
     /**
-     * Check if task is completed
+     * Check if the task is completed.
+     *
+     * @return bool
      */
     public function isCompleted()
     {
@@ -75,7 +81,9 @@ class Task extends Model
     }
 
     /**
-     * Check if task is cancelled
+     * Check if the task is cancelled.
+     *
+     * @return bool
      */
     public function isCancelled()
     {
@@ -83,25 +91,22 @@ class Task extends Model
     }
 
     /**
-     * Check if task is overdue
+     * Check if the task has high priority.
+     *
+     * @return bool
      */
-    public function isOverdue()
+    public function isHighPriority()
     {
-        return now() > $this->deadline && !$this->isCompleted();
+        return $this->priority === 'High' || $this->priority === 'Critical';
     }
 
     /**
-     * Get days remaining until deadline
+     * Check if the task is overdue.
+     *
+     * @return bool
      */
-    public function getDaysRemainingAttribute()
+    public function isOverdue()
     {
-        $today = now()->startOfDay();
-        $deadline = $this->deadline->startOfDay();
-        
-        if ($today > $deadline) {
-            return 0;
-        }
-        
-        return $today->diffInDays($deadline);
+        return $this->deadline < now() && !$this->isCompleted();
     }
 }

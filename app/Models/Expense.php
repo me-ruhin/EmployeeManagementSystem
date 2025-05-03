@@ -35,7 +35,7 @@ class Expense extends Model
     ];
 
     /**
-     * Get the employee associated with the expense.
+     * Get the employee who submitted this expense.
      */
     public function employee()
     {
@@ -43,7 +43,7 @@ class Expense extends Model
     }
 
     /**
-     * Get the department associated with the expense.
+     * Get the department that this expense belongs to.
      */
     public function department()
     {
@@ -51,7 +51,7 @@ class Expense extends Model
     }
 
     /**
-     * Get the user who approved the expense.
+     * Get the user who approved this expense.
      */
     public function approver()
     {
@@ -59,7 +59,9 @@ class Expense extends Model
     }
 
     /**
-     * Check if expense is pending
+     * Check if the expense is pending approval.
+     *
+     * @return bool
      */
     public function isPending()
     {
@@ -67,7 +69,9 @@ class Expense extends Model
     }
 
     /**
-     * Check if expense is approved
+     * Check if the expense is approved.
+     *
+     * @return bool
      */
     public function isApproved()
     {
@@ -75,7 +79,9 @@ class Expense extends Model
     }
 
     /**
-     * Check if expense is rejected
+     * Check if the expense is rejected.
+     *
+     * @return bool
      */
     public function isRejected()
     {

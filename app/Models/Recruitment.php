@@ -23,7 +23,7 @@ class Recruitment extends Model
     ];
 
     /**
-     * Get the department associated with the recruitment.
+     * Get the department that this recruitment belongs to.
      */
     public function department()
     {
@@ -31,7 +31,7 @@ class Recruitment extends Model
     }
 
     /**
-     * Get all candidates for the recruitment.
+     * Get the candidates for this recruitment.
      */
     public function candidates()
     {
@@ -39,7 +39,9 @@ class Recruitment extends Model
     }
 
     /**
-     * Check if recruitment is open
+     * Check if the recruitment is open.
+     *
+     * @return bool
      */
     public function isOpen()
     {
@@ -47,7 +49,9 @@ class Recruitment extends Model
     }
 
     /**
-     * Check if recruitment is closed
+     * Check if the recruitment is closed.
+     *
+     * @return bool
      */
     public function isClosed()
     {
@@ -55,15 +59,32 @@ class Recruitment extends Model
     }
 
     /**
-     * Get the count of candidates by status
+     * Get the number of candidates for this recruitment.
+     *
+     * @return int
      */
-    public function getCandidateStatusCountAttribute()
+    public function getCandidateCountAttribute()
     {
-        return [
-            'pending' => $this->candidates()->where('status', 'Pending')->count(),
-            'shortlisted' => $this->candidates()->where('status', 'Shortlisted')->count(),
-            'rejected' => $this->candidates()->where('status', 'Rejected')->count(),
-            'hired' => $this->candidates()->where('status', 'Hired')->count(),
-        ];
+        return $this->candidates()->count();
+    }
+
+    /**
+     * Get the number of shortlisted candidates for this recruitment.
+     *
+     * @return int
+     */
+    public function getShortlistedCountAttribute()
+    {
+        return $this->candidates()->where('status', 'Shortlisted')->count();
+    }
+
+    /**
+     * Get the number of hired candidates for this recruitment.
+     *
+     * @return int
+     */
+    public function getHiredCountAttribute()
+    {
+        return $this->candidates()->where('status', 'Hired')->count();
     }
 }

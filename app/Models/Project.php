@@ -36,7 +36,7 @@ class Project extends Model
     ];
 
     /**
-     * Get the company associated with the project.
+     * Get the company that this project belongs to.
      */
     public function company()
     {
@@ -44,7 +44,7 @@ class Project extends Model
     }
 
     /**
-     * Get the department associated with the project.
+     * Get the department that this project belongs to.
      */
     public function department()
     {
@@ -52,7 +52,7 @@ class Project extends Model
     }
 
     /**
-     * Get all tasks for the project.
+     * Get the tasks associated with this project.
      */
     public function tasks()
     {
@@ -60,9 +60,41 @@ class Project extends Model
     }
 
     /**
-     * Get completion percentage
+     * Check if the project is ongoing.
+     *
+     * @return bool
      */
-    public function getCompletionPercentageAttribute()
+    public function isOngoing()
+    {
+        return $this->status === 'Ongoing';
+    }
+
+    /**
+     * Check if the project is completed.
+     *
+     * @return bool
+     */
+    public function isCompleted()
+    {
+        return $this->status === 'Completed';
+    }
+
+    /**
+     * Check if the project is cancelled.
+     *
+     * @return bool
+     */
+    public function isCancelled()
+    {
+        return $this->status === 'Cancelled';
+    }
+
+    /**
+     * Get the project's progress percentage based on completed tasks.
+     *
+     * @return float
+     */
+    public function getProgressPercentageAttribute()
     {
         $totalTasks = $this->tasks()->count();
         
@@ -72,37 +104,6 @@ class Project extends Model
         
         $completedTasks = $this->tasks()->where('status', 'Completed')->count();
         
-        return round(($completedTasks / $totalTasks) * 100);
-    }
-
-    /**
-     * Get days remaining
-     */
-    public function getDaysRemainingAttribute()
-    {
-        if (!$this->end_date) {
-            return null;
-        }
-        
-        $today = now()->startOfDay();
-        $endDate = $this->end_date->startOfDay();
-        
-        if ($today > $endDate) {
-            return 0;
-        }
-        
-        return $today->diffInDays($endDate);
-    }
-
-    /**
-     * Check if project is overdue
-     */
-    public function isOverdue()
-    {
-        if (!$this->end_date) {
-            return false;
-        }
-        
-        return now() > $this->end_date && $this->status !== 'Completed';
+        return ($completedTasks / $totalTasks) * 100;
     }
 }
